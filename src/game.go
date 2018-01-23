@@ -16,9 +16,10 @@ const (
 )
 
 var (
-	foodCoord  Coordinate
-	snake      = NewSnake()
-	snakeMutex = &sync.Mutex{}
+	foodCoord        Coordinate
+	lastTailPosition Coordinate
+	snake            = NewSnake()
+	snakeMutex       = &sync.Mutex{}
 )
 
 func initializeSnake() {
@@ -61,9 +62,8 @@ func getSnakeRects(snakePositions []Coordinate) []sdl.Rect {
 
 func foodCollision() {
 	if x, y := snake[0].Position(); x == foodCoord[0] && y == foodCoord[1] {
-		snakeHead := snake[0].(*Head)
 		x, y = snake[1].Position()
-		(&snake).AddSegment(x-snakeHead.vX, y-snakeHead.vY)
+		(&snake).AddSegment(lastTailPosition[0], lastTailPosition[1])
 		setFood()
 	}
 }
@@ -105,6 +105,7 @@ func gameloop(renderer *sdl.Renderer) error {
 		snakeMutex.Lock()
 		snakePositions := getSnakePositions(snake[0])
 		drawGame(renderer, snakePositions)
+		lastTailPosition[0], lastTailPosition[1] = snake[1].Position()
 		snake.AdvancePosition()
 		foodCollision()
 		gameRunning = !checkGameOver(snakePositions)
