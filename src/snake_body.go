@@ -67,14 +67,14 @@ func (s *Snake) moveSnakeSegment(segment SnakeSegment, newX, newY int32) {
 	currentX, currentY := segment.Position()
 	segment.Move(newX, newY)
 	if segment != s[1] {
-		s.moveSnakeSegment(SnakeSegment(Next(segment)), currentX, currentY)
+		s.moveSnakeSegment(Next(segment), currentX, currentY)
 	}
 }
 
 func (s *Snake) AdvancePosition() {
 	currentHeadX, currentHeadY := s[0].Position()
 	s[0].Move(currentHeadX+s[0].(*Head).vX, currentHeadY+s[0].(*Head).vY)
-	s.moveSnakeSegment(SnakeSegment(Next(s[0])), currentHeadX, currentHeadY)
+	s.moveSnakeSegment(Next(s[0]), currentHeadX, currentHeadY)
 }
 
 func (s *Snake) ChangeSnakeDirection(direction string) {

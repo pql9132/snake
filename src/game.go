@@ -16,9 +16,9 @@ const (
 )
 
 var (
+	foodCoord  Coordinate
 	snake      = NewSnake()
 	snakeMutex = &sync.Mutex{}
-	foodCoord  Coordinate
 )
 
 func initializeSnake() {
@@ -37,13 +37,18 @@ func setSnakeDirection(direction string) {
 	snakeMutex.Unlock()
 }
 
+func setFood() {
+	foodCoord[0] = rand.Int31n(Width / gridSize)
+	foodCoord[1] = rand.Int31n(Width / gridSize)
+}
+
 //Returns array of positions, with tail first and head last
 func getSnakePositions(startSegment SnakeSegment) (positions []Coordinate) {
 	x, y := startSegment.Position()
 	if startSegment == snake[1] {
 		return []Coordinate{Coordinate{x, y}}
 	}
-	return append(getSnakePositions(SnakeSegment(Next(startSegment))), Coordinate{x, y})
+	return append(getSnakePositions(Next(startSegment)), Coordinate{x, y})
 }
 
 func getSnakeRects(snakePositions []Coordinate) []sdl.Rect {
@@ -52,11 +57,6 @@ func getSnakeRects(snakePositions []Coordinate) []sdl.Rect {
 		snakeRects = append(snakeRects, sdl.Rect{X: coordinate[0] * 15, Y: coordinate[1] * 15, W: gridSize, H: gridSize})
 	}
 	return snakeRects
-}
-
-func setFood() {
-	foodCoord[0] = rand.Int31n(Width / gridSize)
-	foodCoord[1] = rand.Int31n(Width / gridSize)
 }
 
 func foodCollision() {
